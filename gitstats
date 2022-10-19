@@ -47,7 +47,8 @@ conf = {
 	'linear_linestats': 1,
 	'project_name': '',
 	'processes': 8,
-	'start_date': ''
+	'start_date': '',
+	'tag_pattern': '^.+$'
 }
 
 def getpipeoutput(cmds, quiet = False):
@@ -290,9 +291,12 @@ class GitDataCollector(DataCollector):
 		#self.total_lines = int(getoutput('git-ls-files -z |xargs -0 cat |wc -l'))
 
 		# tags
+		tag_re = re.compile(conf['tag_pattern'])
 		lines = getpipeoutput(['git show-ref --tags']).split('\n')
 		for line in lines:
 			if len(line) == 0:
+				continue
+			if tag_re.search(line) == None:
 				continue
 			(hash, tag) = line.split(' ')
 
